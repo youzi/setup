@@ -22,6 +22,7 @@ endif
 filetype off 
 " Add plugins
 call plug#begin('~/.vim/plugged')
+  Plug 'mattn/emmet-vim'
   Plug 'ctrlpvim/ctrlp.vim'
   Plug 'sheerun/vim-polyglot'
   Plug 'Shougo/deoplete.nvim'
@@ -33,6 +34,7 @@ call plug#begin('~/.vim/plugged')
   Plug 'roxma/vim-hug-neovim-rpc'
   Plug 'w0rp/ale'
   Plug 'easymotion/vim-easymotion'
+  Plug 'tpope/vim-surround'
 call plug#end()
 " Enable filetype
 filetype plugin indent on
@@ -131,23 +133,39 @@ endif
 let g:ale_sign_column_always = 1
 let g:ale_sign_error = '●'
 let g:ale_sign_warning = '.'
-let g:ale_fixers = {'javascript': ['prettier_standard', 'prettier', 'eslint']}
-let g:ale_linters = {'javascript': ['prettier_standard', 'prettier', 'eslint']}
+let g:ale_fixers = {'javascript': ['prettier'], 'json': ['prettier'], 'css': ['prettier'], 'markdown': ['prettier'], 'typescript': ['prettier']}
+let g:ale_linters = {'javascript': ['eslint'], 'typescript': ['eslint']}
 let g:ale_fix_on_save = 1
 " Netrw settings
 let g:netrw_liststyle=0
 let g:netrw_banner=0
 let g:netrw_preview=1
+let g:user_emmet_leader_key='<c-z>'
+let g:user_emmet_settings = {
+  \  'javascript.jsx' : {
+    \      'extends' : 'jsx',
+    \  },
+  \}
+let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files . -co --exclude-standard', 'find %s -type f']
 " Autocommands
 if has('autocmd')
   autocmd FileType javascript setlocal omnifunc=tern#Complete
+  " https://unix.stackexchange.com/questions/149209/refresh-changed-content-of-file-opened-in-vim/149210
+  autocmd FocusGained,BufEnter,CursorHold,CursorHoldI * if mode() != 'c' | checktime | endif
+  autocmd FileChangedShellPost *
+  \ echohl WarningMsg | echo "File changed on disk. Buffer reloaded." | echohl None
 endif
 " Key Mappings
 let mapleader = "\<space>" 
 " Quick command
 map , <Plug>(easymotion-s)
 " Escape clears highlights
-nmap <leader><space> :let @/ = ""<cr>
+nnoremap <leader><space> :let @/=""<CR>
+" Buffers
+nnoremap <leader>b :buffers<cr>:b<space>
+" Comment react
+nmap <leader>c yss*yss/yss}
+nmap <leader>C ds/ds}
 " Delete buffer without closing window
 nnoremap <leader>d :bp<cr>:bd#<cr>
 " Toggle netrw
@@ -173,6 +191,7 @@ imap <expr><tab>
  \ pumvisible() ? "\<C-n>" :
  \ neosnippet#expandable_or_jumpable() ?
  \    "\<Plug>(neosnippet_expand_or_jump)" : "\<tab>"
+
 smap <expr><tab> neosnippet#expandable_or_jumpable() ?
 \ "\<Plug>(neosnippet_expand_or_jump)" : "\<tab>"
 " Toggle netrw
