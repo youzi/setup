@@ -39,6 +39,7 @@ call plug#begin('~/.vim/plugged')
   Plug 'w0rp/ale'
   Plug 'easymotion/vim-easymotion'
   Plug 'tpope/vim-surround'
+  Plug 'Galooshi/vim-import-js'
 call plug#end()
 " Enable filetype
 filetype plugin indent on
@@ -131,6 +132,7 @@ let g:deoplete#sources['javascript.jsx'] = ['file', 'ultisnips', 'ternjs']
 let g:deoplete#sources#ternjs#include_keywords = 1
 let g:deoplete#enable_at_startup = 1
 let g:deoplete#omni#input_patterns = {}
+let g:deoplete#file#enable_buffer_path = 1
 let g:deoplete#auto_completion_start_length = 1
 let g:deoplete#omni#functions = {}
 let g:tern_show_signature_in_pum = 1
