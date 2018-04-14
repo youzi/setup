@@ -22,12 +22,16 @@ endif
 filetype off 
 " Add plugins
 call plug#begin('~/.vim/plugged')
+  Plug 'jiangmiao/auto-pairs'
+  Plug 'wellle/targets.vim'
+  Plug 'tpope/vim-commentary'
   Plug 'mattn/emmet-vim'
   Plug 'ctrlpvim/ctrlp.vim'
   Plug 'sheerun/vim-polyglot'
   Plug 'Shougo/deoplete.nvim'
-  Plug 'Shougo/neosnippet-snippets'
-  Plug 'Shougo/neosnippet.vim'
+  Plug 'ervandew/supertab'
+  Plug 'honza/vim-snippets'
+  Plug 'SirVer/ultisnips'
   Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern' }
   Plug 'rakr/vim-one'
   Plug 'roxma/nvim-yarp'
@@ -121,10 +125,14 @@ set hidden
 " Disable signbar
 set signcolumn=no
 " Autocompletion settings
+set completeopt=longest,menuone,preview
+let g:deoplete#sources = {}
+let g:deoplete#sources['javascript.jsx'] = ['file', 'ultisnips', 'ternjs']
 let g:deoplete#sources#ternjs#include_keywords = 1
 let g:deoplete#enable_at_startup = 1
 let g:deoplete#omni#input_patterns = {}
 let g:deoplete#auto_completion_start_length = 1
+let g:deoplete#omni#functions = {}
 let g:tern_show_signature_in_pum = 1
 if has('conceal')
   set conceallevel=2 concealcursor=niv
@@ -140,16 +148,18 @@ let g:ale_fix_on_save = 1
 let g:netrw_liststyle=0
 let g:netrw_banner=0
 let g:netrw_preview=1
-let g:user_emmet_leader_key='<c-z>'
 let g:user_emmet_settings = {
   \  'javascript.jsx' : {
     \      'extends' : 'jsx',
     \  },
   \}
 let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files . -co --exclude-standard', 'find %s -type f']
+let g:AutoPairsShortcutJump = '<c-a>'
+let g:UltiSnipsExpandTrigger="<C-j>"
 " Autocommands
 if has('autocmd')
-  autocmd FileType javascript setlocal omnifunc=tern#Complete
+  autocmd FileType javascript let g:SuperTabDefaultCompletionType = "<c-x><c-o>"
+  "autocmd FileType javascript setlocal omnifunc=tern#Complete
   " https://unix.stackexchange.com/questions/149209/refresh-changed-content-of-file-opened-in-vim/149210
   autocmd FocusGained,BufEnter,CursorHold,CursorHoldI * if mode() != 'c' | checktime | endif
   autocmd FileChangedShellPost *
@@ -159,6 +169,9 @@ endif
 let mapleader = "\<space>" 
 " Quick command
 map , <Plug>(easymotion-s)
+" Emmet expand
+map <c-z> <c-y>,
+imap <c-z> <c-y>,
 " Escape clears highlights
 nnoremap <leader><space> :let @/=""<CR>
 " Buffers
@@ -177,6 +190,7 @@ nnoremap <leader>s :set spell!<cr>
 " Tab through buffers
 nnoremap <s-tab> :bprev <cr>
 nnoremap <tab> :bnext <cr>
+inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
 " Navigate lines
 nnoremap j gj
 nnoremap k gk
@@ -184,16 +198,6 @@ nnoremap k gk
 noremap / /\v
 vnoremap / /\v
 " Snippet expansion
-imap <c-k> <Plug>(neosnippet_expand_or_jump)
-smap <c-k> <Plug>(neosnippet_expand_or_jump)
-xmap <c-k> <Plug>(neosnippet_expand_target)
-imap <expr><tab>
- \ pumvisible() ? "\<C-n>" :
- \ neosnippet#expandable_or_jumpable() ?
- \    "\<Plug>(neosnippet_expand_or_jump)" : "\<tab>"
-
-smap <expr><tab> neosnippet#expandable_or_jumpable() ?
-\ "\<Plug>(neosnippet_expand_or_jump)" : "\<tab>"
 " Toggle netrw
 fun! ExToggle()
   let l:buf_nr = bufnr("%")
